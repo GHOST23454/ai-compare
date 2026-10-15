@@ -17,7 +17,9 @@ export default function ToolsGrid({ onOpenDetail, externalCategory }: ToolsGridP
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
 
-  const activeCategory = externalCategory || category;
+  // DÜZELTME: externalCategory 'all' ise category'yi kullan
+  const activeCategory =
+    externalCategory && externalCategory !== 'all' ? externalCategory : category;
 
   const filtered = useMemo(() => {
     const s = search.toLowerCase().trim();
@@ -36,9 +38,12 @@ export default function ToolsGrid({ onOpenDetail, externalCategory }: ToolsGridP
     { value: 'all', label: t('filter.all') },
     { value: 'Yazı', label: t('cat.writing') },
     { value: 'Görsel', label: t('cat.visual') },
-    { value: 'Kod', label: t('cat.code') },
     { value: 'Ses', label: t('cat.audio') },
+    { value: 'Kod', label: t('cat.code') },
     { value: 'Video', label: t('cat.video') },
+    { value: 'Analiz', label: t('cat.analytics') },
+    { value: 'İş', label: t('cat.business') },
+    { value: 'Eğitim', label: t('cat.education') },
   ];
 
   return (
