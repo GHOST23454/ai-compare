@@ -408,3 +408,8 @@ html.light .aurora { opacity: 0.35; }
   background: linear-gradient(#a855f7, #22d3ee);
   border-radius: 4px;
 }
+
+/* Hero başlık - temaya göre renk */
+.hero-title {
+  color: var(--text);
+}

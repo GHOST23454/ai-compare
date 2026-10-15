@@ -58,7 +58,7 @@ export default function Hero() {
           <span>{t('hero.badge')}</span>
         </div>
 
-        <h1 className="font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-[1.05] mb-6 text-white">
+        <h1 className="font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-[1.05] mb-6 hero-title">
           {t('hero.title1')}
           <br />
           <span className="gradient-text">{t('hero.title2')}</span>
