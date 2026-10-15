@@ -20,9 +20,71 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "AI Compare — En İyi Yapay Zeka Araçları",
+  title: {
+    default: "AI Compare — En İyi Yapay Zeka Araçları 2026",
+    template: "%s | AI Compare",
+  },
   description:
-    "Yapay zeka araçlarını karşılaştır, keşfet, en iyisini seç. ChatGPT, Claude, Midjourney ve daha fazlası.",
+    "2026'nın en iyi yapay zeka araçlarını karşılaştır, keşfet ve puanla. ChatGPT, Claude, Midjourney, Cursor ve daha fazlası tek bir yerde. Ücretsiz AI araçları rehberi.",
+  keywords: [
+    "yapay zeka",
+    "AI araçları",
+    "ChatGPT",
+    "Claude",
+    "Midjourney",
+    "yapay zeka araçları 2026",
+    "en iyi AI araçları",
+    "ücretsiz AI araçları",
+    "AI karşılaştırma",
+    "yapay zeka karşılaştırma",
+    "Cursor",
+    "GitHub Copilot",
+    "Suno",
+    "ElevenLabs",
+  ],
+  authors: [{ name: "Kerem Gürgün" }],
+  creator: "Kerem Gürgün",
+  publisher: "AI Compare",
+  metadataBase: new URL("https://ai-compare-hazel.vercel.app"),
+  alternates: {
+    canonical: "/",
+    languages: {
+      "tr-TR": "/",
+      "en-US": "/?lang=en",
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "tr_TR",
+    alternateLocale: "en_US",
+    url: "https://ai-compare-hazel.vercel.app",
+    siteName: "AI Compare",
+    title: "AI Compare — En İyi Yapay Zeka Araçları 2026",
+    description:
+      "2026'nın en iyi yapay zeka araçlarını karşılaştır, keşfet ve puanla. ChatGPT, Claude, Midjourney ve daha fazlası.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Compare — En İyi Yapay Zeka Araçları 2026",
+    description:
+      "2026'nın en iyi yapay zeka araçlarını karşılaştır, keşfet ve puanla.",
+    creator: "@ghost23454",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    // İleride Google Search Console'dan alacağın kod buraya gelecek
+  },
+  category: "technology",
 };
 
 export default function RootLayout({
