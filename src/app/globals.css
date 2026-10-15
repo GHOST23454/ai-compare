@@ -413,3 +413,40 @@ html.light .aurora { opacity: 0.35; }
 .hero-title {
   color: var(--text);
 }
+
+/* ===== AÇIK TEMA DÜZELTMELERİ ===== */
+
+/* Navbar linkleri */
+html.light .nav-link {
+  color: #374151;
+}
+
+/* Açık temada soluk yazılar */
+html.light .text-gray-300 {
+  color: #4b5563;
+}
+
+html.light .text-gray-400 {
+  color: #6b7280;
+}
+
+html.light .text-gray-500 {
+  color: #9ca3af;
+}
+
+/* Badge ve kart başlıkları */
+html.light .text-white {
+  color: #0a0a12;
+}
+
+/* Glass efekt - açık temada hafif gölge */
+html.light .glass {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Gradient butonlar açık temada daha canlı */
+html.light .btn-glow {
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+}

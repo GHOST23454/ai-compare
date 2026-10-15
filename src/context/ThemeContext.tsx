@@ -14,12 +14,39 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>('dark');
   const [mounted, setMounted] = useState(false);
 
-  // İlk yüklemede localStorage'dan oku
+  // İlk yüklemede: localStorage'da kayıt var mı? Yoksa sistem teması
   useEffect(() => {
     const saved = localStorage.getItem('theme') as Theme | null;
-    if (saved) setTheme(saved);
+
+    if (saved) {
+      // Kullanıcı daha önce seçim yapmış → onu kullan
+      setTheme(saved);
+    } else {
+      // Kayıt yok → sistem temasını algıla
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(systemDark ? 'dark' : 'light');
+    }
+
     setMounted(true);
   }, []);
+
+  // Sistem teması değişirse (kullanıcı manuel seçim yapmadıysa) takip et
+  useEffect(() => {
+    if (!mounted) return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Kullanıcı manuel seçim yapmadıysa sistem temasını takip et
+      const saved = localStorage.getItem('theme');
+      if (!saved) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [mounted]);
 
   // Tema değişince HTML'e uygula
   useEffect(() => {
