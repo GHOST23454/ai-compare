@@ -6,6 +6,7 @@ import { LangProvider } from "@/context/LangContext";
 import { AppProvider } from "@/context/AppContext";
 import ToastContainer from "@/components/Toast";
 import ScrollTop from "@/components/ScrollTop";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -83,9 +84,7 @@ export const metadata: Metadata = {
   },
   category: "technology",
   icons: {
-    icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
-    ],
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
     apple: "/icon.svg",
     shortcut: "/icon.svg",
   },
@@ -109,6 +108,7 @@ export default function RootLayout({
             </AppProvider>
           </LangProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
