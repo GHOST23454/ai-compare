@@ -34,11 +34,38 @@ export default function Navbar({ onOpenFavorites, onOpenCompare }: NavbarProps) 
     { href: '#hakkinda', label: t('nav.about') },
   ];
 
+  // URL'de # göstermeden smooth scroll yapan fonksiyon
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    e.preventDefault();
+    const id = href.replace('#', '');
+    const element = document.getElementById(id);
+
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // URL'den hash'i temizle (adres çubuğunda #görünmesin)
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+
+    // Mobil menüyü kapat
+    setMobileOpen(false);
+  };
+
   return (
     <nav className="fixed top-0 w-full z-50 glass">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-2 font-display font-bold text-xl flex-shrink-0">
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.history.replaceState(null, '', window.location.pathname);
+          }}
+          className="flex items-center gap-2 font-display font-bold text-xl flex-shrink-0 cursor-pointer"
+        >
           <span className="w-9 h-9 rounded-lg bg-gradient-to-br from-neon-purple to-neon-cyan flex items-center justify-center">
             <Zap size={16} className="text-white" />
           </span>
@@ -48,7 +75,12 @@ export default function Navbar({ onOpenFavorites, onOpenCompare }: NavbarProps) 
         {/* Masaüstü linkler */}
         <div className="hidden lg:flex items-center gap-7 text-sm text-gray-300">
           {navLinks.map((link) => (
-            <a key={link.href} href={link.href} className="nav-link">
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="nav-link cursor-pointer"
+            >
               {link.label}
             </a>
           ))}
@@ -102,7 +134,8 @@ export default function Navbar({ onOpenFavorites, onOpenCompare }: NavbarProps) 
           {/* Başla */}
           <a
             href="#kesfet"
-            className="btn-glow hidden md:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink text-sm font-medium hover:scale-105 transition"
+            onClick={(e) => handleNavClick(e, '#kesfet')}
+            className="btn-glow hidden md:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink text-sm font-medium hover:scale-105 transition cursor-pointer"
           >
             <Rocket size={14} />
             <span>{t('nav.start')}</span>
@@ -126,8 +159,8 @@ export default function Navbar({ onOpenFavorites, onOpenCompare }: NavbarProps) 
             <a
               key={link.href}
               href={link.href}
-              className="nav-link block"
-              onClick={() => setMobileOpen(false)}
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="nav-link block cursor-pointer"
             >
               {link.label}
             </a>
