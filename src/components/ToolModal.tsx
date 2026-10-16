@@ -41,7 +41,7 @@ interface ToolModalProps {
 
 export default function ToolModal({ tool, onClose }: ToolModalProps) {
   const { isFavorite, toggleFavorite } = useApp();
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -106,7 +106,9 @@ export default function ToolModal({ tool, onClose }: ToolModalProps) {
           </button>
         </div>
 
-        <p className="text-gray-400 leading-relaxed mb-6">{tool.longDesc}</p>
+        <p className="text-gray-400 leading-relaxed mb-6">
+          {tool.longDesc[lang]}
+        </p>
 
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="glass rounded-xl p-4">
@@ -114,7 +116,9 @@ export default function ToolModal({ tool, onClose }: ToolModalProps) {
             <div className="font-semibold text-sm text-white">{tool.price}</div>
           </div>
           <div className="glass rounded-xl p-4">
-            <div className="text-xs text-gray-500 mb-1">{t('modal.category')}</div>
+            <div className="text-xs text-gray-500 mb-1">
+              {t('modal.category')}
+            </div>
             <div className="font-semibold text-sm text-white">{tool.cat}</div>
           </div>
         </div>
@@ -124,7 +128,7 @@ export default function ToolModal({ tool, onClose }: ToolModalProps) {
             {t('modal.features')}
           </h3>
           <div className="flex flex-wrap gap-2">
-            {tool.features.map((f) => (
+            {tool.features[lang].map((f: string) => (
               <span
                 key={f}
                 className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-300"
@@ -141,7 +145,7 @@ export default function ToolModal({ tool, onClose }: ToolModalProps) {
               <CheckCircle2 size={14} /> {t('modal.pros')}
             </h3>
             <ul className="space-y-1 text-sm text-gray-400">
-              {tool.pros.map((p) => (
+              {tool.pros[lang].map((p: string) => (
                 <li key={p}>• {p}</li>
               ))}
             </ul>
@@ -151,7 +155,7 @@ export default function ToolModal({ tool, onClose }: ToolModalProps) {
               <XCircle size={14} /> {t('modal.cons')}
             </h3>
             <ul className="space-y-1 text-sm text-gray-400">
-              {tool.cons.map((c) => (
+              {tool.cons[lang].map((c: string) => (
                 <li key={c}>• {c}</li>
               ))}
             </ul>

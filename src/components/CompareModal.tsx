@@ -38,7 +38,7 @@ interface CompareModalProps {
 
 export default function CompareModal({ isOpen, onClose }: CompareModalProps) {
   const { compare, toggleCompare } = useApp();
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -72,17 +72,21 @@ export default function CompareModal({ isOpen, onClose }: CompareModalProps) {
     },
     {
       label: t('modal.category'),
-      render: (tool: typeof tools[0]) => <span className="text-white">{tool.cat}</span>,
+      render: (tool: typeof tools[0]) => (
+        <span className="text-white">{tool.cat}</span>
+      ),
     },
     {
       label: t('modal.price'),
-      render: (tool: typeof tools[0]) => <span className="text-white">{tool.price}</span>,
+      render: (tool: typeof tools[0]) => (
+        <span className="text-white">{tool.price}</span>
+      ),
     },
     {
       label: t('modal.features'),
       render: (tool: typeof tools[0]) => (
         <div className="flex flex-wrap gap-1 justify-center">
-          {tool.features.map((f) => (
+          {tool.features[lang].map((f: string) => (
             <span
               key={f}
               className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-300"
@@ -97,7 +101,7 @@ export default function CompareModal({ isOpen, onClose }: CompareModalProps) {
       label: t('modal.pros'),
       render: (tool: typeof tools[0]) => (
         <div className="space-y-1">
-          {tool.pros.map((p) => (
+          {tool.pros[lang].map((p: string) => (
             <div key={p} className="text-xs text-emerald-400">
               + {p}
             </div>
@@ -109,7 +113,7 @@ export default function CompareModal({ isOpen, onClose }: CompareModalProps) {
       label: t('modal.cons'),
       render: (tool: typeof tools[0]) => (
         <div className="space-y-1">
-          {tool.cons.map((c) => (
+          {tool.cons[lang].map((c: string) => (
             <div key={c} className="text-xs text-red-400">
               − {c}
             </div>
