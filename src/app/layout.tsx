@@ -82,6 +82,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  verification: {
+    google: "7JyHRD6K0KmP9sFAeRvvrFaIyyjko7lSBl2RAn9wLT4",
+  },
   category: "technology",
   icons: {
     icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
