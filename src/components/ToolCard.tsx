@@ -38,7 +38,7 @@ interface ToolCardProps {
 
 export default function ToolCard({ tool, onClick }: ToolCardProps) {
   const { isFavorite, isCompared, toggleFavorite, toggleCompare } = useApp();
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   const Icon = iconMap[tool.icon] || MessageSquare;
   const fav = isFavorite(tool.id);
@@ -90,7 +90,9 @@ export default function ToolCard({ tool, onClick }: ToolCardProps) {
         {tool.name}
       </h3>
       <p className="text-xs text-neon-cyan mb-3">{tool.cat}</p>
-      <p className="text-sm text-gray-400 mb-5 leading-relaxed">{tool.desc}</p>
+      <p className="text-sm text-gray-400 mb-5 leading-relaxed">
+        {tool.desc[lang]}
+      </p>
 
       {/* Alt kısım */}
       <div className="flex items-center justify-between pt-4 border-t border-white/5">

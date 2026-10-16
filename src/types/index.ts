@@ -1,3 +1,13 @@
+export interface LocalizedText {
+  tr: string;
+  en: string;
+}
+
+export interface LocalizedArray {
+  tr: string[];
+  en: string[];
+}
+
 export interface Tool {
   id: string;
   name: string;
@@ -5,14 +15,14 @@ export interface Tool {
   icon: string;
   color: string;
   rating: number;
-  desc: string;
-  longDesc: string;
+  desc: LocalizedText;
+  longDesc: LocalizedText;
   tag: 'Ücretsiz' | 'Freemium' | 'Ücretli';
   price: string;
   website: string;
-  features: string[];
-  pros: string[];
-  cons: string[];
+  features: LocalizedArray;
+  pros: LocalizedArray;
+  cons: LocalizedArray;
 }
 
 export type Lang = 'tr' | 'en';

@@ -18,7 +18,7 @@ export default function ToolsGrid({
   externalCategory,
   onClearExternalCategory,
 }: ToolsGridProps) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
 
@@ -44,11 +44,11 @@ export default function ToolsGrid({
         !s ||
         tool.name.toLowerCase().includes(s) ||
         tool.cat.toLowerCase().includes(s) ||
-        tool.desc.toLowerCase().includes(s);
+        tool.desc[lang].toLowerCase().includes(s);
       const matchCat = category === 'all' || tool.cat === category;
       return matchSearch && matchCat;
     });
-  }, [search, category]);
+  }, [search, category, lang]);
 
   const filterOptions = [
     { value: 'all', label: t('filter.all') },
