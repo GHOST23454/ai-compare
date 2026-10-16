@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Search, Ghost } from 'lucide-react';
 import { tools } from '@/data/tools';
 import { Tool } from '@/types';
@@ -10,16 +10,32 @@ import ToolCard from './ToolCard';
 interface ToolsGridProps {
   onOpenDetail: (tool: Tool) => void;
   externalCategory?: string;
+  onClearExternalCategory?: () => void;
 }
 
-export default function ToolsGrid({ onOpenDetail, externalCategory }: ToolsGridProps) {
+export default function ToolsGrid({
+  onOpenDetail,
+  externalCategory,
+  onClearExternalCategory,
+}: ToolsGridProps) {
   const { t } = useLang();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
 
-  // DÜZELTME: externalCategory 'all' ise category'yi kullan
-  const activeCategory =
-    externalCategory && externalCategory !== 'all' ? externalCategory : category;
+  // Dış kategori değişince iç state'e yansıt
+  useEffect(() => {
+    if (externalCategory && externalCategory !== 'all') {
+      setCategory(externalCategory);
+    }
+  }, [externalCategory]);
+
+  // Filtre butonuna tıklanınca: iç state güncelle + dış state'i sıfırla
+  const handleFilterClick = (value: string) => {
+    setCategory(value);
+    if (onClearExternalCategory) {
+      onClearExternalCategory();
+    }
+  };
 
   const filtered = useMemo(() => {
     const s = search.toLowerCase().trim();
@@ -29,10 +45,10 @@ export default function ToolsGrid({ onOpenDetail, externalCategory }: ToolsGridP
         tool.name.toLowerCase().includes(s) ||
         tool.cat.toLowerCase().includes(s) ||
         tool.desc.toLowerCase().includes(s);
-      const matchCat = activeCategory === 'all' || tool.cat === activeCategory;
+      const matchCat = category === 'all' || tool.cat === category;
       return matchSearch && matchCat;
     });
-  }, [search, activeCategory]);
+  }, [search, category]);
 
   const filterOptions = [
     { value: 'all', label: t('filter.all') },
@@ -79,8 +95,8 @@ export default function ToolsGrid({ onOpenDetail, externalCategory }: ToolsGridP
           {filterOptions.map((opt) => (
             <button
               key={opt.value}
-              onClick={() => setCategory(opt.value)}
-              className={`filter-btn ${activeCategory === opt.value ? 'active' : ''}`}
+              onClick={() => handleFilterClick(opt.value)}
+              className={`filter-btn ${category === opt.value ? 'active' : ''}`}
             >
               {opt.label}
             </button>

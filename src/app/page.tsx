@@ -15,7 +15,7 @@ import CompareModal from '@/components/CompareModal';
 
 export default function Home() {
   const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
-  const [externalCategory, setExternalCategory] = useState<string>('all');
+  const [externalCategory, setExternalCategory] = useState<string | undefined>(undefined);
   const [favOpen, setFavOpen] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
 
@@ -37,7 +37,8 @@ export default function Home() {
       <ToolsGrid
         onOpenDetail={setSelectedTool}
         externalCategory={externalCategory}
-      />
+        onClearExternalCategory={() => setExternalCategory('all')}
+/>
       <Leaders />
       <Newsletter />
       <Footer />
