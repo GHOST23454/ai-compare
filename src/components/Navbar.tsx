@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import {
   Zap,
   Globe,
@@ -30,6 +31,7 @@ export default function Navbar({ onOpenFavorites, onOpenCompare }: NavbarProps) 
   const navLinks = [
     { href: '#kesfet', label: t('nav.explore') },
     { href: '#kategoriler', label: t('nav.categories') },
+    { href: '/blog', label: 'Blog' },
     { href: '#liderler', label: t('nav.leaders') },
     { href: '#hakkinda', label: t('nav.about') },
   ];
@@ -39,13 +41,25 @@ export default function Navbar({ onOpenFavorites, onOpenCompare }: NavbarProps) 
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
+    // Eğer link sayfa linki ise (örneğin /blog), normal çalışmasına izin ver
+    if (!href.startsWith('#')) {
+      setMobileOpen(false);
+      return;
+    }
+
     e.preventDefault();
     const id = href.replace('#', '');
+    
+    // Ana sayfada değilsek (örneğin /blog sayfasındaysak), ana sayfaya dön
+    if (window.location.pathname !== '/') {
+      window.location.href = '/' + href;
+      return;
+    }
+
     const element = document.getElementById(id);
 
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // URL'den hash'i temizle (adres çubuğunda #görünmesin)
       window.history.replaceState(null, '', window.location.pathname);
     }
 
@@ -58,11 +72,13 @@ export default function Navbar({ onOpenFavorites, onOpenCompare }: NavbarProps) 
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
         {/* Logo */}
         <a
-          href="#"
+          href="/"
           onClick={(e) => {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            window.history.replaceState(null, '', window.location.pathname);
+            if (window.location.pathname === '/') {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              window.history.replaceState(null, '', window.location.pathname);
+            }
           }}
           className="flex items-center gap-2 font-display font-bold text-xl flex-shrink-0 cursor-pointer"
         >
