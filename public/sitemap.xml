@@ -1,21 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Ana Sayfa -->
   <url>
     <loc>https://ai-compare-hazel.vercel.app/</loc>
     <lastmod>2026-10-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+  
+  <!-- Blog Listesi -->
   <url>
     <loc>https://ai-compare-hazel.vercel.app/blog</loc>
     <lastmod>2026-10-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  
+  <!-- Blog Yazıları -->
   <url>
     <loc>https://ai-compare-hazel.vercel.app/blog/en-iyi-ai-yazi-araclari</loc>
     <lastmod>2026-10-17</lastmod>
-    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ai-compare-hazel.vercel.app/blog/chatgpt-vs-claude</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ai-compare-hazel.vercel.app/blog/yapay-zeka-ile-para-kazanma</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ai-compare-hazel.vercel.app/blog/ucretsiz-vs-ucretli-ai-araclari</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ai-compare-hazel.vercel.app/blog/yapay-zeka-ile-ingilizce-ogrenmek</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ai-compare-hazel.vercel.app/blog/kod-yazmayi-ogrenmek-ai</loc>
+    <lastmod>2026-10-18</lastmod>
     <priority>0.7</priority>
   </url>
 </urlset>
