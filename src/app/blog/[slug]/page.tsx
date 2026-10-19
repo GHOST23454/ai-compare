@@ -1,41 +1,28 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { remark } from 'remark';
-import html from 'remark-html';
+import BlogPost from '@/components/BlogPost';
 
-async function getPost(slug: string) {
+export default async function Post({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  
+  // Eğer slug gelmezse boş string ata ki kod çökmesin
+  const slug = resolvedParams?.slug || '';
+  
+  // Dosya yolunu oluştur
   const filePath = path.join(process.cwd(), 'src/content/blog', `${slug}.md`);
+  
+  if (!fs.existsSync(filePath)) {
+    return (
+      <div className="text-white pt-32 text-center text-2xl flex flex-col items-center">
+        <p>Yazı bulunamadı. (404)</p>
+        <p className="text-sm text-gray-400 mt-2">Aranan dosya: {slug}.md</p>
+      </div>
+    );
+  }
+
   const fileContents = fs.readFileSync(filePath, 'utf8');
   const { data, content } = matter(fileContents);
 
-  const processedContent = await remark().use(html).process(content);
-  const contentHtml = processedContent.toString();
-
-  return {
-    slug,
-    title: data.title,
-    date: data.date,
-    contentHtml,
-  };
-}
-
-export default async function Post({ params }: { params: Promise<{ slug: string }> }) {
-  // Next.js 15+ için params'ı await ile bekliyoruz
-  const resolvedParams = await params;
-  const post = await getPost(resolvedParams.slug);
-
-  return (
-    <main className="min-h-screen pt-32 pb-24 px-6 max-w-3xl mx-auto">
-      <div className="mb-8">
-        <div className="text-neon-cyan mb-2">{post.date}</div>
-        <h1 className="font-display font-bold text-4xl text-white">{post.title}</h1>
-      </div>
-      
-      <div 
-        className="prose prose-invert prose-lg text-gray-300"
-        dangerouslySetInnerHTML={{ __html: post.contentHtml }} 
-      />
-    </main>
-  );
+  return <BlogPost post={{ ...data, content }} />;
 }

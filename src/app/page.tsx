@@ -12,12 +12,14 @@ import Footer from '@/components/Footer';
 import ToolModal from '@/components/ToolModal';
 import FavoritesModal from '@/components/FavoritesModal';
 import CompareModal from '@/components/CompareModal';
+import AuthModal from '@/components/AuthModal';
 
 export default function Home() {
   const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
-  const [externalCategory, setExternalCategory] = useState<string | undefined>(undefined);
+  const [externalCategory, setExternalCategory] = useState<string>('all');
   const [favOpen, setFavOpen] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false); 
 
   const handleSelectCategory = (cat: string) => {
     setExternalCategory(cat);
@@ -31,6 +33,7 @@ export default function Home() {
       <Navbar
         onOpenFavorites={() => setFavOpen(true)}
         onOpenCompare={() => setCompareOpen(true)}
+        onOpenAuth={() => setAuthOpen(true)}
       />
       <Hero />
       <Categories onSelectCategory={handleSelectCategory} />
@@ -38,7 +41,7 @@ export default function Home() {
         onOpenDetail={setSelectedTool}
         externalCategory={externalCategory}
         onClearExternalCategory={() => setExternalCategory('all')}
-/>
+      />
       <Leaders />
       <Newsletter />
       <Footer />
@@ -46,6 +49,7 @@ export default function Home() {
       <ToolModal tool={selectedTool} onClose={() => setSelectedTool(null)} />
       <FavoritesModal isOpen={favOpen} onClose={() => setFavOpen(false)} />
       <CompareModal isOpen={compareOpen} onClose={() => setCompareOpen(false)} />
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </>
   );
 }

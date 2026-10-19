@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import {
   Zap,
   Globe,
@@ -12,21 +11,48 @@ import {
   Rocket,
   Menu,
   X,
+  LogIn,
+  LogOut,
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import { useLang } from '@/context/LangContext';
 import { useApp } from '@/context/AppContext';
+import { supabase } from '@/lib/supabase';
 
 interface NavbarProps {
   onOpenFavorites: () => void;
   onOpenCompare: () => void;
+  onOpenAuth: () => void;
 }
 
-export default function Navbar({ onOpenFavorites, onOpenCompare }: NavbarProps) {
+export default function Navbar({ onOpenFavorites, onOpenCompare, onOpenAuth }: NavbarProps) {
   const { theme, toggleTheme } = useTheme();
   const { lang, toggleLang, t } = useLang();
   const { favorites, compare } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getSession();
+      setUser(data.session?.user || null);
+    };
+    checkUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user || null);
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
 
   const navLinks = [
     { href: '#kesfet', label: t('nav.explore') },
@@ -36,12 +62,11 @@ export default function Navbar({ onOpenFavorites, onOpenCompare }: NavbarProps) 
     { href: '#hakkinda', label: t('nav.about') },
   ];
 
-  // URL'de # göstermeden smooth scroll yapan fonksiyon
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
-    // Eğer link sayfa linki ise (örneğin /blog), normal çalışmasına izin ver
+    // Eğer link sayfa içi değilse (yani /blog gibi bir sayfaysa), normal çalışmasına izin ver.
     if (!href.startsWith('#')) {
       setMobileOpen(false);
       return;
@@ -50,7 +75,7 @@ export default function Navbar({ onOpenFavorites, onOpenCompare }: NavbarProps) 
     e.preventDefault();
     const id = href.replace('#', '');
     
-    // Ana sayfada değilsek (örneğin /blog sayfasındaysak), ana sayfaya dön
+    // Eğer ana sayfada değilsek, önce ana sayfaya dön
     if (window.location.pathname !== '/') {
       window.location.href = '/' + href;
       return;
@@ -63,7 +88,6 @@ export default function Navbar({ onOpenFavorites, onOpenCompare }: NavbarProps) 
       window.history.replaceState(null, '', window.location.pathname);
     }
 
-    // Mobil menüyü kapat
     setMobileOpen(false);
   };
 
@@ -105,57 +129,46 @@ export default function Navbar({ onOpenFavorites, onOpenCompare }: NavbarProps) 
         {/* Sağ taraf */}
         <div className="flex items-center gap-2">
           {/* Dil */}
-          <button
-            onClick={toggleLang}
-            className="icon-btn"
-            aria-label="Dil değiştir"
-          >
+          <button onClick={toggleLang} className="icon-btn" aria-label="Dil değiştir">
             <Globe size={14} />
             <span className="text-xs font-semibold">{lang.toUpperCase()}</span>
           </button>
 
           {/* Tema */}
-          <button
-            onClick={toggleTheme}
-            className="icon-btn"
-            aria-label="Tema değiştir"
-          >
+          <button onClick={toggleTheme} className="icon-btn" aria-label="Tema değiştir">
             {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
           </button>
 
           {/* Favoriler */}
-          <button
-            onClick={onOpenFavorites}
-            className="icon-btn"
-            aria-label="Favoriler"
-          >
+          <button onClick={onOpenFavorites} className="icon-btn" aria-label="Favoriler">
             <Heart size={16} />
-            {favorites.length > 0 && (
-              <span className="badge-count">{favorites.length}</span>
-            )}
+            {favorites.length > 0 && <span className="badge-count">{favorites.length}</span>}
           </button>
 
           {/* Karşılaştır */}
-          <button
-            onClick={onOpenCompare}
-            className="icon-btn"
-            aria-label="Karşılaştır"
-          >
+          <button onClick={onOpenCompare} className="icon-btn" aria-label="Karşılaştır">
             <Scale size={16} />
-            {compare.length > 0 && (
-              <span className="badge-count">{compare.length}</span>
-            )}
+            {compare.length > 0 && <span className="badge-count">{compare.length}</span>}
           </button>
 
-          {/* Başla */}
-          <a
-            href="#kesfet"
-            onClick={(e) => handleNavClick(e, '#kesfet')}
-            className="btn-glow hidden md:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink text-sm font-medium hover:scale-105 transition cursor-pointer"
-          >
-            <Rocket size={14} />
-            <span>{t('nav.start')}</span>
-          </a>
+          {/* Giriş / Çıkış */}
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="btn-glow hidden md:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium hover:bg-red-500/20 hover:text-red-400 transition cursor-pointer text-white"
+            >
+              <LogOut size={14} />
+              <span>Çıkış Yap</span>
+            </button>
+          ) : (
+            <button
+              onClick={onOpenAuth}
+              className="btn-glow hidden md:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink text-sm font-medium hover:scale-105 transition cursor-pointer text-white"
+            >
+              <LogIn size={14} />
+              <span>Giriş Yap</span>
+            </button>
+          )}
 
           {/* Mobil menü butonu */}
           <button
@@ -181,6 +194,13 @@ export default function Navbar({ onOpenFavorites, onOpenCompare }: NavbarProps) 
               {link.label}
             </a>
           ))}
+          <div className="pt-2 border-t border-white/10">
+             {user ? (
+              <button onClick={handleLogout} className="text-red-400 font-semibold">Çıkış Yap</button>
+             ) : (
+              <button onClick={() => { onOpenAuth(); setMobileOpen(false); }} className="text-neon-cyan font-semibold">Giriş Yap</button>
+             )}
+          </div>
         </div>
       )}
     </nav>
