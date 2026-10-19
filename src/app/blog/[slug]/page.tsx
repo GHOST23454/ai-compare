@@ -5,11 +5,8 @@ import BlogPost from '@/components/BlogPost';
 
 export default async function Post({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
-  
-  // Eğer slug gelmezse boş string ata ki kod çökmesin
   const slug = resolvedParams?.slug || '';
   
-  // Dosya yolunu oluştur
   const filePath = path.join(process.cwd(), 'src/content/blog', `${slug}.md`);
   
   if (!fs.existsSync(filePath)) {
