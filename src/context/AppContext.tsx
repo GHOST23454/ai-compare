@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { ToastItem } from '@/types';
 import { useLang } from '@/context/LangContext';
+import { supabase } from '@/lib/supabase';
 
 interface AppContextType {
   favorites: string[];
@@ -31,28 +32,47 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [compare, setCompare] = useState<string[]>([]);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
-  // Çeviri fonksiyonu (dil değişince toast'lar da güncel dilde gelsin)
   const { t } = useLang();
 
-  // localStorage'dan oku
   useEffect(() => {
-    const savedFav = localStorage.getItem('favorites');
+    // Oturum kontrolü
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getSession();
+      setUser(data.session?.user || null);
+      
+      if (data.session?.user) {
+        // Kullanıcı giriş yaptıysa favorilerini veritabanından çek
+        const { data: favs } = await supabase
+          .from('favorites')
+          .select('tool_id')
+          .eq('user_id', data.session.user.id);
+        
+        if (favs) setFavorites(favs.map((f) => f.tool_id));
+      }
+    };
+    checkUser();
+
+    // Oturum değişikliklerini dinle
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user || null);
+      if (!session?.user) {
+        setFavorites([]); // Çıkış yapınca favorileri temizle
+      }
+    });
+
+    // LocalStorage'dan karşılaştırmayı çek (bunu tarayıcıda tutabiliriz)
     const savedComp = localStorage.getItem('compare');
-    if (savedFav) setFavorites(JSON.parse(savedFav));
     if (savedComp) setCompare(JSON.parse(savedComp));
+    
     setMounted(true);
+
+    return () => authListener.subscription.unsubscribe();
   }, []);
 
-  // localStorage'a yaz
   useEffect(() => {
-    if (!mounted) return;
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-  }, [favorites, mounted]);
-
-  useEffect(() => {
-    if (!mounted) return;
-    localStorage.setItem('compare', JSON.stringify(compare));
+    if (mounted) localStorage.setItem('compare', JSON.stringify(compare));
   }, [compare, mounted]);
 
   const removeToast = useCallback((id: number) => {
@@ -69,17 +89,27 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
 
   const toggleFavorite = useCallback(
-    (id: string) => {
+    async (id: string) => {
+      if (!user) {
+        showToast('Favorilere eklemek için giriş yapmalısın', 'warning');
+        return;
+      }
+
       const exists = favorites.includes(id);
+      
       if (exists) {
         setFavorites((prev) => prev.filter((f) => f !== id));
         showToast(t('toast.favRemoved'), 'info');
+        // Veritabanından sil
+        await supabase.from('favorites').delete().eq('user_id', user.id).eq('tool_id', id);
       } else {
         setFavorites((prev) => [...prev, id]);
         showToast(t('toast.favAdded'), 'success');
+        // Veritabanına ekle
+        await supabase.from('favorites').insert({ user_id: user.id, tool_id: id });
       }
     },
-    [favorites, showToast, t]
+    [favorites, showToast, t, user]
   );
 
   const toggleCompare = useCallback(
@@ -100,39 +130,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [compare, showToast, t]
   );
 
-  const isFavorite = useCallback(
-    (id: string) => favorites.includes(id),
-    [favorites]
-  );
-
-  const isCompared = useCallback(
-    (id: string) => compare.includes(id),
-    [compare]
-  );
+  const isFavorite = useCallback((id: string) => favorites.includes(id), [favorites]);
+  const isCompared = useCallback((id: string) => compare.includes(id), [compare]);
 
   const value = useMemo(
     () => ({
-      favorites,
-      compare,
-      toasts,
-      toggleFavorite,
-      toggleCompare,
-      showToast,
-      removeToast,
-      isFavorite,
-      isCompared,
+      favorites, compare, toasts, toggleFavorite, toggleCompare,
+      showToast, removeToast, isFavorite, isCompared,
     }),
-    [
-      favorites,
-      compare,
-      toasts,
-      toggleFavorite,
-      toggleCompare,
-      showToast,
-      removeToast,
-      isFavorite,
-      isCompared,
-    ]
+    [favorites, compare, toasts, toggleFavorite, toggleCompare, showToast, removeToast, isFavorite, isCompared]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
