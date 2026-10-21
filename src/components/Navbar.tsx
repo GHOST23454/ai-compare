@@ -8,7 +8,6 @@ import {
   Sun,
   Heart,
   Scale,
-  Rocket,
   Menu,
   X,
   LogIn,
@@ -66,7 +65,6 @@ export default function Navbar({ onOpenFavorites, onOpenCompare, onOpenAuth }: N
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
-    // Eğer link sayfa içi değilse (yani /blog gibi bir sayfaysa), normal çalışmasına izin ver.
     if (!href.startsWith('#')) {
       setMobileOpen(false);
       return;
@@ -75,7 +73,6 @@ export default function Navbar({ onOpenFavorites, onOpenCompare, onOpenAuth }: N
     e.preventDefault();
     const id = href.replace('#', '');
     
-    // Eğer ana sayfada değilsek, önce ana sayfaya dön
     if (window.location.pathname !== '/') {
       window.location.href = '/' + href;
       return;
@@ -151,15 +148,26 @@ export default function Navbar({ onOpenFavorites, onOpenCompare, onOpenAuth }: N
             {compare.length > 0 && <span className="badge-count">{compare.length}</span>}
           </button>
 
-          {/* Giriş / Çıkış */}
+          {/* Giriş / Çıkış ve Profil */}
           {user ? (
-            <button
-              onClick={handleLogout}
-              className="btn-glow hidden md:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium hover:bg-red-500/20 hover:text-red-400 transition cursor-pointer text-white"
-            >
-              <LogOut size={14} />
-              <span>Çıkış Yap</span>
-            </button>
+            <div className="hidden md:flex items-center gap-3">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-neon-purple to-neon-cyan flex items-center justify-center text-xs font-bold text-white uppercase">
+                  {user.email?.charAt(0) || 'U'}
+                </div>
+                <span className="text-sm text-gray-300 max-w-[120px] truncate">
+                  {user.email?.split('@')[0]}
+                </span>
+              </div>
+              
+              <button
+                onClick={handleLogout}
+                className="text-gray-400 hover:text-red-400 transition p-2 rounded-full hover:bg-red-500/10 cursor-pointer"
+                title="Çıkış Yap"
+              >
+                <LogOut size={16} />
+              </button>
+            </div>
           ) : (
             <button
               onClick={onOpenAuth}
