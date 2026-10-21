@@ -13,14 +13,14 @@ export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const { favorites } = useApp();
-  const { lang } = useLang();
+  const { lang, t } = useLang(); // t fonksiyonunu da kullanacağız
   const router = useRouter();
 
   useEffect(() => {
     const checkUser = async () => {
       const { data } = await supabase.auth.getSession();
       if (!data.session?.user) {
-        router.push('/'); // Giriş yapmamışsa ana sayfaya at
+        router.push('/');
       } else {
         setUser(data.session.user);
       }
@@ -34,16 +34,36 @@ export default function ProfilePage() {
     router.push('/');
   };
 
-  if (loading) return <div className="text-white text-center pt-32">Yükleniyor...</div>;
+  if (loading) return <div className="text-white text-center pt-32">Loading...</div>;
   if (!user) return null;
 
   const favoriteTools = tools.filter((tool) => favorites.includes(tool.id));
+
+  // Çeviriler (Basitçe burada tanımladık)
+  const texts = {
+    tr: {
+      back: 'Ana Sayfaya Dön',
+      favorites: 'Favori Araçlarım',
+      empty: 'Henüz favori aracın yok. Keşfet sayfasından araçları favorilerine ekleyebilirsin.',
+      logout: 'Çıkış Yap',
+      category: 'Kategori',
+    },
+    en: {
+      back: 'Back to Home',
+      favorites: 'My Favorite Tools',
+      empty: "You don't have any favorite tools yet. You can add tools to your favorites from the Explore page.",
+      logout: 'Log Out',
+      category: 'Category',
+    },
+  };
+
+  const currentTexts = texts[lang as keyof typeof texts] || texts.tr;
 
   return (
     <main className="min-h-screen pt-32 pb-24 px-6 max-w-4xl mx-auto">
       {/* Geri Dön */}
       <Link href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition">
-        <ArrowLeft size={16} /> Ana Sayfaya Dön
+        <ArrowLeft size={16} /> {currentTexts.back}
       </Link>
 
       {/* Profil Kartı */}
@@ -61,7 +81,7 @@ export default function ProfilePage() {
           onClick={handleLogout}
           className="flex items-center gap-2 px-5 py-2 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition"
         >
-          <LogOut size={16} /> Çıkış Yap
+          <LogOut size={16} /> {currentTexts.logout}
         </button>
       </div>
 
@@ -69,18 +89,18 @@ export default function ProfilePage() {
       <div>
         <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
           <Heart className="text-neon-pink" size={20} fill="currentColor" /> 
-          Favori Araçlarım ({favoriteTools.length})
+          {currentTexts.favorites} ({favoriteTools.length})
         </h2>
         
         {favoriteTools.length === 0 ? (
           <div className="glass rounded-2xl p-8 text-center text-gray-400">
-            Henüz favori aracın yok. Keşfet sayfasından araçları favorilerine ekleyebilirsin.
+            {currentTexts.empty}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {favoriteTools.map((tool) => (
               <Link 
-                href={`/?tool=${tool.id}`} // Ana sayfada o aracı açmak için (şimdilik ana sayfaya atar)
+                href={`/?tool=${tool.id}`} 
                 key={tool.id}
                 className="glass rounded-2xl p-4 flex items-center gap-4 hover:bg-white/5 transition"
               >
@@ -89,7 +109,7 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <h3 className="text-white font-semibold">{tool.name}</h3>
-                  <p className="text-xs text-gray-400">{tool.cat}</p>
+                  <p className="text-xs text-gray-400">{currentTexts.category}: {tool.cat}</p>
                 </div>
               </Link>
             ))}
