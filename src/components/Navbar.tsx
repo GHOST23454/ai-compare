@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   Zap,
   Globe,
@@ -151,14 +152,19 @@ export default function Navbar({ onOpenFavorites, onOpenCompare, onOpenAuth }: N
           {/* Giriş / Çıkış ve Profil */}
           {user ? (
             <div className="hidden md:flex items-center gap-3">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+              
+              {/* Profil Sayfası Linki */}
+              <Link 
+                href="/profile"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition cursor-pointer"
+              >
                 <div className="w-6 h-6 rounded-full bg-gradient-to-br from-neon-purple to-neon-cyan flex items-center justify-center text-xs font-bold text-white uppercase">
                   {user.email?.charAt(0) || 'U'}
                 </div>
                 <span className="text-sm text-gray-300 max-w-[120px] truncate">
                   {user.email?.split('@')[0]}
                 </span>
-              </div>
+              </Link>
               
               <button
                 onClick={handleLogout}
@@ -204,7 +210,10 @@ export default function Navbar({ onOpenFavorites, onOpenCompare, onOpenAuth }: N
           ))}
           <div className="pt-2 border-t border-white/10">
              {user ? (
-              <button onClick={handleLogout} className="text-red-400 font-semibold">Çıkış Yap</button>
+              <>
+                <Link href="/profile" className="block text-neon-cyan font-semibold mb-3">Profilim</Link>
+                <button onClick={handleLogout} className="text-red-400 font-semibold">Çıkış Yap</button>
+              </>
              ) : (
               <button onClick={() => { onOpenAuth(); setMobileOpen(false); }} className="text-neon-cyan font-semibold">Giriş Yap</button>
              )}
