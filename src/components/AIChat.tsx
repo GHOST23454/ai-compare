@@ -65,26 +65,30 @@ export default function AIChat() {
 
   return (
     <>
-      {/* Sohbet Butonu (Sağ Alt) */}
+      {/* Sohbet Butonu (Mobilde sağ alt, Masaüstünde yukarı çık butonuyla çakışmayacak şekilde) */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white shadow-lg flex items-center justify-center hover:scale-110 transition z-50 ${isOpen ? 'hidden' : 'flex'}`}
+        className={`fixed bottom-6 right-6 md:bottom-8 md:right-24 w-14 h-14 rounded-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white shadow-lg flex items-center justify-center hover:scale-110 transition z-50 ${isOpen ? 'hidden' : 'flex'}`}
         aria-label="Sohbeti Aç"
       >
         <MessageSquare size={24} />
       </button>
 
-      {/* Sohbet Penceresi */}
+      {/* Sohbet Penceresi (Mobilde tam ekran, Masaüstünde sağ altta kutu) */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-[350px] h-[500px] glass rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden border border-white/20">
+        <div className="fixed z-50 flex flex-col overflow-hidden glass shadow-2xl border border-white/20 
+                        /* Mobil için tam ekran */
+                        inset-0 w-full h-full rounded-none 
+                        /* Masaüstü için sağ alt kutu */
+                        md:inset-auto md:bottom-6 md:right-6 md:w-[380px] md:h-[550px] md:rounded-2xl">
           
           {/* Başlık */}
-          <div className="bg-gradient-to-r from-neon-purple to-neon-cyan p-4 flex items-center justify-between text-white">
+          <div className="bg-gradient-to-r from-neon-purple to-neon-cyan p-4 flex items-center justify-between text-white shrink-0">
             <div className="flex items-center gap-2 font-semibold">
               <Bot size={20} />
               <span>{currentTexts.title}</span>
             </div>
-            <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-1 rounded transition">
+            <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-1 rounded transition cursor-pointer">
               <X size={20} />
             </button>
           </div>
@@ -123,7 +127,7 @@ export default function AIChat() {
           </div>
 
           {/* Giriş Alanı */}
-          <form onSubmit={handleSend} className="p-3 bg-black/60 border-t border-white/10 flex gap-2">
+          <form onSubmit={handleSend} className="p-3 bg-black/60 border-t border-white/10 flex gap-2 shrink-0 pb-safe">
             <input
               type="text"
               value={input}
@@ -134,7 +138,7 @@ export default function AIChat() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-10 h-10 rounded-full bg-neon-cyan text-black flex items-center justify-center hover:scale-105 transition disabled:opacity-50"
+              className="w-10 h-10 rounded-full bg-neon-cyan text-black flex items-center justify-center hover:scale-105 transition disabled:opacity-50 cursor-pointer"
             >
               <Send size={18} />
             </button>
