@@ -7,6 +7,7 @@ import { AppProvider } from "@/context/AppContext";
 import ToastContainer from "@/components/Toast";
 import ScrollTop from "@/components/ScrollTop";
 import { Analytics } from "@vercel/analytics/next";
+import AIChat from "@/components/AIChat";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -108,6 +109,7 @@ export default function RootLayout({
               {children}
               <ToastContainer />
               <ScrollTop />
+              <AIChat />
             </AppProvider>
           </LangProvider>
         </ThemeProvider>
