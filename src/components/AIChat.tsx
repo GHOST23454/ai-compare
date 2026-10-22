@@ -6,7 +6,7 @@ import { useLang } from '@/context/LangContext';
 
 export default function AIChat() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<{ role: 'user' | 'bot'; text: string }[]>([]);
+  const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; text: string }[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -18,13 +18,11 @@ export default function AIChat() {
       title: 'AI Asistan',
       placeholder: 'Bir mesaj yazın...',
       welcome: 'Merhaba! Ben AI Compare asistanı. Sana en uygun yapay zeka aracını bulmanda veya aklındaki soruları cevaplamada yardımcı olabilirim. Ne sormak istersin?',
-      fakeReply: 'Bu harika bir soru! Şu an beynim geliştiriliyor, çok yakında buna cevap verebileceğim. 🚀',
     },
     en: {
       title: 'AI Assistant',
       placeholder: 'Type a message...',
       welcome: 'Hello! I am the AI Compare assistant. I can help you find the best AI tool for you or answer your questions. What would you like to ask?',
-      fakeReply: 'That is a great question! My brain is currently being developed, I will be able to answer this very soon. 🚀',
     }
   };
 
@@ -34,7 +32,7 @@ export default function AIChat() {
   useEffect(() => {
     if (isOpen) {
       setMessages([
-        { role: 'bot', text: currentTexts.welcome }
+        { role: 'assistant', text: currentTexts.welcome }
       ]);
     }
   }, [isOpen, lang, currentTexts.welcome]);
@@ -50,22 +48,43 @@ export default function AIChat() {
 
     const userMessage = input.trim();
     setInput('');
-    setMessages((prev) => [...prev, { role: 'user', text: userMessage }]);
+    
+    // Kullanıcının mesajını ekrana ekle
+    const newMessages = [...messages, { role: 'user' as const, text: userMessage }];
+    setMessages(newMessages);
     setIsLoading(true);
 
-    // Şimdilik sahte bir yanıt
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { role: 'bot', text: currentTexts.fakeReply }
-      ]);
+    try {
+      // API'ye gönderilecek mesaj formatını hazırla (Groq OpenAI formatı ister)
+      const apiMessages = newMessages.map((msg) => ({
+        role: msg.role,
+        content: msg.text,
+      }));
+
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: apiMessages }),
+      });
+
+      const data = await response.json();
+
+      if (data.text) {
+        setMessages((prev) => [...prev, { role: 'assistant', text: data.text }]);
+      } else {
+        setMessages((prev) => [...prev, { role: 'assistant', text: 'Üzgünüm, şu an cevap veremiyorum.' }]);
+      }
+    } catch (error) {
+      console.error(error);
+      setMessages((prev) => [...prev, { role: 'assistant', text: 'Bir hata oluştu. Lütfen tekrar deneyin.' }]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
     <>
-      {/* Sohbet Butonu (Mobilde sağ alt, Masaüstünde yukarı çık butonuyla çakışmayacak şekilde) */}
+      {/* Sohbet Butonu */}
       <button
         onClick={() => setIsOpen(true)}
         className={`fixed bottom-6 right-6 md:bottom-8 md:right-24 w-14 h-14 rounded-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white shadow-lg flex items-center justify-center hover:scale-110 transition z-50 ${isOpen ? 'hidden' : 'flex'}`}
@@ -74,13 +93,9 @@ export default function AIChat() {
         <MessageSquare size={24} />
       </button>
 
-      {/* Sohbet Penceresi (Mobilde tam ekran, Masaüstünde sağ altta kutu) */}
+      {/* Sohbet Penceresi */}
       {isOpen && (
-        <div className="fixed z-50 flex flex-col overflow-hidden glass shadow-2xl border border-white/20 
-                        /* Mobil için tam ekran */
-                        inset-0 w-full h-full rounded-none 
-                        /* Masaüstü için sağ alt kutu */
-                        md:inset-auto md:bottom-6 md:right-6 md:w-[380px] md:h-[550px] md:rounded-2xl">
+        <div className="fixed z-50 flex flex-col overflow-hidden glass shadow-2xl border border-white/20 inset-0 w-full h-full rounded-none md:inset-auto md:bottom-6 md:right-6 md:w-[380px] md:h-[550px] md:rounded-2xl">
           
           {/* Başlık */}
           <div className="bg-gradient-to-r from-neon-purple to-neon-cyan p-4 flex items-center justify-between text-white shrink-0">
@@ -97,7 +112,7 @@ export default function AIChat() {
           <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-4 bg-black/40">
             {messages.map((msg, index) => (
               <div key={index} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                {msg.role === 'bot' && (
+                {msg.role === 'assistant' && (
                   <div className="w-8 h-8 rounded-full bg-neon-cyan/20 flex items-center justify-center flex-shrink-0">
                     <Bot size={16} className="text-neon-cyan" />
                   </div>
@@ -127,7 +142,7 @@ export default function AIChat() {
           </div>
 
           {/* Giriş Alanı */}
-          <form onSubmit={handleSend} className="p-3 bg-black/60 border-t border-white/10 flex gap-2 shrink-0 pb-safe">
+          <form onSubmit={handleSend} className="p-3 bg-black/60 border-t border-white/10 flex gap-2 shrink-0">
             <input
               type="text"
               value={input}
