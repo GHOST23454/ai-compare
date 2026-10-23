@@ -64,6 +64,14 @@ export const metadata: Metadata = {
     title: "AI Compare — En İyi Yapay Zeka Araçları 2026",
     description:
       "2026'nın en iyi yapay zeka araçlarını karşılaştır, keşfet ve puanla. ChatGPT, Claude, Midjourney ve daha fazlası.",
+    images: [
+      {
+        url: "/icon.svg",
+        width: 32,
+        height: 32,
+        alt: "AI Compare Logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -71,6 +79,7 @@ export const metadata: Metadata = {
     description:
       "2026'nın en iyi yapay zeka araçlarını karşılaştır, keşfet ve puanla.",
     creator: "@ghost23454",
+    images: ["/icon.svg"],
   },
   robots: {
     index: true,
